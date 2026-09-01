@@ -1,10 +1,22 @@
 
-export const errorHandler = (error, req, res, next) => {
+export const errorHandler = (err, req, res, next) => {
     try {
-        
-        console.log(Object(error));
-        const message = error.message;
-        const code = error.code || 500
+        const error = Object(err)
+        console.log(error);
+        let message;
+        let code;
+        if(error.code == '23502') {
+            message = "Password cannot be null";
+            code = "409"
+        }
+        else if (error.code == '23505') {
+            message = "Email is alread exist";
+            code = "409"
+        }
+        else {
+            message = error.message
+            code = error.code || 500
+        }
 
         console.log(`Error: ${message}`)
         console.log(`code: ${code}`)
