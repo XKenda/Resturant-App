@@ -4,5 +4,5 @@ config({ path: `.env.${process.env.NODE_ENV ? "production" : 'development'}.loca
 
 export const {
     PORT,
-    PDB_URL,
+    DATABASE_URL,
 } = process.env

@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon ./server.js",
-    "start": "node ./server.js"
+    "start": "node ./server.js",
+    "migrate": "npx dbmate --env-file=.env.development.local migrate"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -15,5 +16,10 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "dbmate": "^2.35.1",
+    "node-pg-migrate": "^9.0.0",
+    "postgrator-cli": "^10.0.0"
   }
 }
