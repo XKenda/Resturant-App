@@ -5,4 +5,5 @@ config({ path: `.env.${process.env.NODE_ENV ? "production" : 'development'}.loca
 export const {
     PORT,
     DATABASE_URL,
+    REFRESH_SECRET,
 } = process.env
