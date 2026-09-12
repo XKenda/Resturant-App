@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { createRefreshToken, signupService, userIsExist } from "./auth.service.js";
+import { createRefreshToken, savetokenToDatabase, signupService, userIsExist } from "./auth.service.js";
 
 
 export const signupController = async (req, res, next) => {
@@ -26,12 +26,20 @@ export const loginController = async (req, res, next) => {
         if(!passwordIsMatch) return res.status(404).json({success: false, message: "email or password is incorrect"});
         
         const refreshToken = await createRefreshToken({id: user.id})
-        res.cookie("Refresh Token", refreshToken, {
-            httpOnly: true,
-            secure: false,
-            sameSite : 'lax',
-            maxAge : 1 * 60 * 60 * 24 * 15,
-        })
+
+        const tokenSaved = await savetokenToDatabase(refreshToken)
+
+        if(tokenSaved) {
+
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: false,
+                sameSite : 'lax',
+                maxAge : 1000 * 60 * 60 * 24 * 15,
+            })
+        } else {
+            return res.status(403).json({success: false, message: "An error occured, please try again later"})
+        }
         return res.status(200).json({success: true, id: user.id})
     } catch (error) {
         next(error)
