@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon ./server.js",
     "start": "node ./server.js",
-    "migrate": "npx dbmate --env-file=.env.development.local migrate"
+    "migrate": "npx dotenv-cli -e .env.development.local -- dbmate migrate"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -21,7 +21,6 @@
   },
   "devDependencies": {
     "dbmate": "^2.35.1",
-    "node-pg-migrate": "^9.0.0",
-    "postgrator-cli": "^10.0.0"
+    "dotenv-cli": "^11.0.0"
   }
 }
