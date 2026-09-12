@@ -45,3 +45,8 @@ export const loginController = async (req, res, next) => {
         next(error)
     }
 }
+
+
+export const logoutCountroller = (req, res, next) => {
+    return res.end();
+}
