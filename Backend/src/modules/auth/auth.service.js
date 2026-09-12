@@ -50,3 +50,14 @@ export const savetokenToDatabase = async (token) => {
         throw error
     }
 }
+
+export const deleteToken = async (token) => {
+    try {
+        const res = await pool.query("DELETE FROM tokens WHERE token = $1 RETURNING *", [token])
+        if(res.rows[0]) return true;
+
+        return false
+    } catch (error) {
+        throw error
+    }
+}

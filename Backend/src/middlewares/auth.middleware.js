@@ -14,7 +14,6 @@ const auth = async (req, res, next) => {
         const id = await jwt.verify(token, REFRESH_SECRET).id
 
         const user = await getUser(id)
-        console.log(user)
 
         req.user = user;
         req.token = token

@@ -13,8 +13,7 @@ export const connectToDatabase = async () => {
     await pool.connect().then(() => {
         console.log("\nConnected To Database\n")
     }).catch((error) => {
-        console.log("\n=================================\nFailed Connecting to Database\n============================\n");
-        console.log(`\n=================================\nError: ${Object(error)}\n============================\n`)
+        connectToDatabase();
     })
 }
 

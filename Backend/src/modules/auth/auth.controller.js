@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { createRefreshToken, savetokenToDatabase, signupService, userIsExist } from "./auth.service.js";
+import { createRefreshToken, deleteToken, savetokenToDatabase, signupService, userIsExist } from "./auth.service.js";
 
 
 export const signupController = async (req, res, next) => {
@@ -47,6 +47,22 @@ export const loginController = async (req, res, next) => {
 }
 
 
-export const logoutCountroller = (req, res, next) => {
-    return res.end();
+export const logoutCountroller = async (req, res, next) => {
+    try {
+        const token = req.token;
+
+        const tokenDeleted = await deleteToken(token);
+
+        if(!tokenDeleted) return res.status(403).json({success: false, message: "Error ocured , try again later"})
+
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 1000 * 60 * 60 * 24 * 15
+        })
+        res.status(204).json({success: true, message : "logout successfully"})
+    } catch (error) {
+        next(error)
+    }
 }
