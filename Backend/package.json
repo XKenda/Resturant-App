@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon ./server.js",
     "start": "node ./server.js",
-    "migrate": "npx dotenv-cli -e .env.development.local -- dbmate migrate"
+    "migrate": "npx dotenv-cli -e .env.development.local -- dbmate  migrate",
+    "rollback": "npx dotenv-cli -e .env.development.local -- dbmate  rollback",
+    "status": "npx dotenv-cli -e .env.development.local -- dbmate  status"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -18,7 +20,8 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.3",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "nodemailer": "^10.0.11"
   },
   "devDependencies": {
     "dbmate": "^2.35.1",

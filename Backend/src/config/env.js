@@ -6,4 +6,6 @@ export const {
     PORT,
     DATABASE_URL,
     REFRESH_SECRET,
+    SMTP_USER,
+    SMTP_PASS
 } = process.env

@@ -1,5 +1,8 @@
 import bcrypt from "bcryptjs";
 import { createRefreshToken, deleteToken, savetokenToDatabase, signupService, userIsExist } from "./auth.service.js";
+import transport from "../../config/nodemailer.config.js";
+import sendEmail from "../../shared/send_email.js";
+import { emailVerifictionBody } from "../../utils/emailsBody.js";
 
 
 export const signupController = async (req, res, next) => {
@@ -64,5 +67,41 @@ export const logoutCountroller = async (req, res, next) => {
         res.status(204).json({success: true, message : "logout successfully"})
     } catch (error) {
         next(error)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const testController = async (req, res, next) => {
+    try {
+        await sendEmail("elmlonxxr@gmail.com", emailVerifictionBody(17792))
+        console.log("\n email has been sent \n")
+        res.status(200).send("done")
+    } catch (error) {
+        console.log(error)
+        res.status(404).send("failed")
     }
 }
