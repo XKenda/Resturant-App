@@ -1,8 +1,10 @@
 import bcrypt from "bcryptjs";
-import { createRefreshToken, deleteToken, savetokenToDatabase, signupService, userIsExist } from "./auth.service.js";
+import { createRefreshToken, deleteToken, saveOTP, savetokenToDatabase, signupService, userIsExist } from "./auth.service.js";
 import transport from "../../config/nodemailer.config.js";
 import sendEmail from "../../shared/send_email.js";
 import { emailVerifictionBody } from "../../utils/emailsBody.js";
+import GenerateOTP from "../../shared/otpGeneration.js";
+import hashOTP from "../../shared/otpHashing.js";
 
 
 export const signupController = async (req, res, next) => {
@@ -11,9 +13,17 @@ export const signupController = async (req, res, next) => {
 
         const hashedpassword = await bcrypt.hash(password, 8);
 
-        const id = await signupService({username, email, age, password:hashedpassword})
+        const data = await signupService({username, email, age, password:hashedpassword})
 
-        return res.status(200).json({success: true, id});
+        const otp = GenerateOTP();
+        const hashedOTP = hashOTP(otp);
+        const id = await saveOTP(hashedOTP, data.id)
+
+        await sendEmail(data.email, emailVerifictionBody(otp))
+
+        
+
+        return res.status(200).json({success: true, id : data.id});
     } catch (error) {
         next(error);
     }
@@ -67,41 +77,5 @@ export const logoutCountroller = async (req, res, next) => {
         res.status(204).json({success: true, message : "logout successfully"})
     } catch (error) {
         next(error)
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export const testController = async (req, res, next) => {
-    try {
-        await sendEmail("elmlonxxr@gmail.com", emailVerifictionBody(17792))
-        console.log("\n email has been sent \n")
-        res.status(200).send("done")
-    } catch (error) {
-        console.log(error)
-        res.status(404).send("failed")
     }
 }

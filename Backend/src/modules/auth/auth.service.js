@@ -1,15 +1,15 @@
 import jwt from "jsonwebtoken";
 import pool from "../../config/db.js"
 import { REFRESH_SECRET } from "../../config/env.js";
-import datetime from "datetime"
 
 
 export const signupService = async ({ username, email, age, password }) => {
     try {
-        const id = await pool.query(`INSERT INTO users(name, email, age, password) VALUES ($1, $2, $3, $4) RETURNING id`
+        const res = await pool.query(`INSERT INTO users(name, email, age, password) VALUES ($1, $2, $3, $4) RETURNING id, email`
             , [username, email, age, password]
         )
-        return id.rows[0].id
+
+        return res.rows[0]
     } catch (error) {
         throw error
     }
@@ -40,7 +40,7 @@ export const savetokenToDatabase = async (token) => {
         endDate.setDate(endDate.getDate() + 15)
 
         const res = await pool.query('INSERT INTO tokens(token, enddate) VALUES ($1 , $2) RETURNING id', [token, endDate])
-        console.log(res)
+
         if (res.rows[0]) {
             return true
         }
@@ -57,6 +57,18 @@ export const deleteToken = async (token) => {
         if(res.rows[0]) return true;
 
         return false
+    } catch (error) {
+        throw error
+    }
+}
+
+export const saveOTP = async (otp, id) => {
+    try {
+        const current = new Date();
+        current.setMinutes(current.getMinutes() + 15)
+        const data = await pool.query("INSERT INTO emailverificationotp(user_id, otp_hash, expires_at) VALUES ($1, $2, $3) RETURNING id ", [id, otp, current])
+
+        return data.rows[0].id
     } catch (error) {
         throw error
     }
