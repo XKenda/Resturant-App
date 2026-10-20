@@ -5,6 +5,7 @@ import sendEmail from "../../shared/send_email.js";
 import { emailVerifictionBody } from "../../utils/emailsBody.js";
 import GenerateOTP from "../../shared/otpGeneration.js";
 import hashOTP from "../../shared/otpHashing.js";
+import hashOTP from "../../shared/otpHashing.js";
 
 
 export const signupController = async (req, res, next) => {
@@ -75,6 +76,20 @@ export const logoutCountroller = async (req, res, next) => {
             maxAge: 1000 * 60 * 60 * 24 * 15
         })
         res.status(204).json({success: true, message : "logout successfully"})
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
+export const verifEmailController = async (req, res, next) => {
+    try {
+        const {email, otp} = req.body;
+
+        const hashedOTP = hashOTP(otp);
+
+        const verified = 
     } catch (error) {
         next(error)
     }

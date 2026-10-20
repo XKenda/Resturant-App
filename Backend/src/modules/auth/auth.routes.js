@@ -7,7 +7,7 @@ const authRouter = Router();
 authRouter.post("/signup", signupController);
 authRouter.post("/login", loginController)
 authRouter.delete('/logout', auth, logoutCountroller)
-authRouter.get('/test', testController)
+authRouter.post('/verify-email', )
 
 
 export default authRouter;

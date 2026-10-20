@@ -66,9 +66,31 @@ export const saveOTP = async (otp, id) => {
     try {
         const current = new Date();
         current.setMinutes(current.getMinutes() + 15)
+        await pool.query("DELETE * FROM emailverificationotp WHERE user_id = $1", [id]);
         const data = await pool.query("INSERT INTO emailverificationotp(user_id, otp_hash, expires_at) VALUES ($1, $2, $3) RETURNING id ", [id, otp, current])
 
         return data.rows[0].id
+    } catch (error) {
+        throw error
+    }
+}
+
+export const verifyEmailService = async ({email, hashedOTP}) => {
+    try {
+        const data = await pool.query('SELECT * FROM emailverificationotp WHERE email = $1', [email]);
+
+        const user = data.rows[0][0]
+        console.log(data.rows[0])
+
+        if(!user) return {verified: false, message: "Verify your email later"}
+
+        const current = new Date();
+        if( current > user.expires_at) return {verified: false, message: "OTP has been expired, please try again"}
+        if(!user.otp_hash === hashedOTP) return {verified: false, message: "Wrong otp try againg"}
+
+        await pool.query("UPDATE user SET email_verified = true WHERE email = $1", [email])
+
+        return {verified: true}
     } catch (error) {
         throw error
     }
