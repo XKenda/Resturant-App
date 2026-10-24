@@ -41,10 +41,7 @@ export const savetokenToDatabase = async (token) => {
 
         const res = await pool.query('INSERT INTO tokens(token, enddate) VALUES ($1 , $2) RETURNING id', [token, endDate])
 
-        if (res.rows[0]) {
-            return true
-        }
-        return true
+        return Boolean(res.rows[0])
 
     } catch (error) {
         throw error
@@ -62,12 +59,12 @@ export const deleteToken = async (token) => {
     }
 }
 
-export const saveOTP = async (otp, id) => {
+export const saveOTP = async (otp, email, id) => {
     try {
         const current = new Date();
         current.setMinutes(current.getMinutes() + 15)
-        await pool.query("DELETE * FROM emailverificationotp WHERE user_id = $1", [id]);
-        const data = await pool.query("INSERT INTO emailverificationotp(user_id, otp_hash, expires_at) VALUES ($1, $2, $3) RETURNING id ", [id, otp, current])
+        await pool.query("DELETE FROM emailverificationotp WHERE user_id = $1", [id]);
+        const data = await pool.query("INSERT INTO emailverificationotp(user_id, email, otp_hash, expires_at) VALUES ($1, $2, $3, $4) RETURNING id ", [id, email, otp, current])
 
         return data.rows[0].id
     } catch (error) {
@@ -75,11 +72,12 @@ export const saveOTP = async (otp, id) => {
     }
 }
 
-export const verifyEmailService = async ({email, hashedOTP}) => {
+export const verifyEmailService = async (email, hashedOTP) => {
     try {
+        console.log(email)
         const data = await pool.query('SELECT * FROM emailverificationotp WHERE email = $1', [email]);
 
-        const user = data.rows[0][0]
+        const user = data.rows[0]
         console.log(data.rows[0])
 
         if(!user) return {verified: false, message: "Verify your email later"}
@@ -88,7 +86,8 @@ export const verifyEmailService = async ({email, hashedOTP}) => {
         if( current > user.expires_at) return {verified: false, message: "OTP has been expired, please try again"}
         if(!user.otp_hash === hashedOTP) return {verified: false, message: "Wrong otp try againg"}
 
-        await pool.query("UPDATE user SET email_verified = true WHERE email = $1", [email])
+        await pool.query("UPDATE users SET emailVerified = true WHERE email = $1", [email])
+        await pool.query("DELETE emailverificationotp WHERE email = $1", [email])
 
         return {verified: true}
     } catch (error) {

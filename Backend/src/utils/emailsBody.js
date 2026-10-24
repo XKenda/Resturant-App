@@ -69,7 +69,7 @@ export const emailVerifictionBody = (code) => {
                 font-size: 14px;
                 line-height: 1.6;
             ">
-                This verification link will expire in
+                This verification Code will expire in
                 <strong>15 minutes</strong>.
             </p>
 
