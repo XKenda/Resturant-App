@@ -5,6 +5,7 @@ import { emailVerifictionBody } from "../../utils/emailsBody.js";
 import GenerateOTP from "../../shared/otpGeneration.js";
 import hashOTP from "../../shared/otpHashing.js";
 import issueRefreshToken from "../../shared/issueRefreshToken.js";
+import RemoveRefreshTokenCookie from "../../shared/removeRefreshTokenCookie.js";
 
 
 
@@ -18,7 +19,7 @@ export const signupController = async (req, res, next) => {
 
         const otp = GenerateOTP();
         const hashedOTP = hashOTP(otp);
-        const id = await saveOTP(hashedOTP, email, data.id)
+        await saveOTP(hashedOTP, email, data.id)
 
         await sendEmail(data.email, emailVerifictionBody(otp))
 
@@ -61,13 +62,11 @@ export const logoutCountroller = async (req, res, next) => {
 
         if(!tokenDeleted) return res.status(403).json({success: false, message: "Error ocured , try again later"})
 
-        res.clearCookie("refreshToken", {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 1000 * 60 * 60 * 24 * 15
-        })
-        res.status(204).json({success: true, message : "logout successfully"})
+        const cookieRemoved = RemoveRefreshTokenCookie(res);
+
+        if(cookieRemoved) return res.status(204).json({success: true, message : "logout successfully"})
+
+        return res.status(404).json({success: false, message: "Error occured, Please try again later"})
     } catch (error) {
         next(error)
     }
