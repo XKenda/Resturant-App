@@ -1,13 +1,13 @@
 -- migrate:up
 
-CREATE TYPE user_roles AS ENUM (
-    "Customer", 
-    "Recepionist",
-    "Waiter",
-    "Chef",
-    "Manager",
-    "CEO"
-)
+CREATE TYPE user_roles AS ENUM(
+    'Customer', 
+    'Recepionist',
+    'Waiter',
+    'Chef',
+    'Manager',
+    'CEO'
+);
 
 
 CREATE TABLE users (
@@ -19,7 +19,7 @@ CREATE TABLE users (
     age NUMERIC DEFAULT 18,
     password VARCHAR(100) NOT NULL,
     phone VARCHAR(100) UNIQUE,
-    user_roles NOT Null DEFAULT 'Customer'
+    user_role user_roles NOT Null DEFAULT 'Customer'
 );
 
 -- migrate:down
